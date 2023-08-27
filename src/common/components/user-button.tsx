@@ -9,11 +9,11 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-//import { useUser } from "@auth0/nextjs-auth0/client";
 import { useCallback, useState } from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/navigation";
 import { styled } from '@mui/system';
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 const LogoutLabel =  styled('a')(({ theme }) => ({
   color:  theme.palette.text.primary,
@@ -24,12 +24,7 @@ export default function UserButton() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const router = useRouter();
-  //const { user } = useUser();
-  //todo update when auth0 configured
-  const user = {
-    name:'Vagia Tourlida',
-    email:'vagiatourlida@hotmail.com'
-  };
+  const { user } = useUser();
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

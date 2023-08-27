@@ -61,13 +61,13 @@ const MobileNavbar = ({ routes }: NavbarProps) => {
   return (
     <AppBar position="static">
       <Container
-        maxWidth="xl"
         sx={{
           bgcolor: "background.default",
           color: "text.primary",
+          maxWidth:'100% !important'
         }}
       >
-        <Toolbar disableGutters sx={{ width: "100%" }}>
+        <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1 }}>
             <IconButton
               size="large"
