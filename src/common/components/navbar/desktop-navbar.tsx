@@ -1,4 +1,13 @@
-import { AppBar, Box, Button, Container, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Stack,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 import UserButton from "../user-button";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
@@ -11,16 +20,14 @@ import { toggleThemeMode } from "@/common/reducers/app.slice";
 import { NavbarProps } from ".";
 import { useCallback } from "react";
 
-export default function DesktopNavbar({
-  routes,
-}: NavbarProps) {
+export default function DesktopNavbar({ routes }: NavbarProps) {
   const dispatch = useDispatch();
   const themeMode = useSelector((state: RootState) => state.app.themeMode);
-  
+
   const handleToggleTheme = useCallback(() => {
     console.log("handleToggleTheme");
     dispatch(toggleThemeMode());
-  },[dispatch]);
+  }, [dispatch]);
 
   const rightActionButtons = [
     {
@@ -48,10 +55,10 @@ export default function DesktopNavbar({
         sx={{
           bgcolor: "background.default",
           color: "text.primary",
-          maxWidth:'100% !important'
+          maxWidth: "100% !important",
         }}
       >
-        <Toolbar disableGutters sx={{width:'100%'}}>
+        <Toolbar disableGutters sx={{ width: "100%" }}>
           <AdbIcon sx={{ mr: 1 }} />
           <Typography
             variant="h6"
@@ -60,7 +67,7 @@ export default function DesktopNavbar({
             href="/store"
             sx={{
               mr: 2,
-              display:  "flex",
+              display: "flex",
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
@@ -70,12 +77,12 @@ export default function DesktopNavbar({
           >
             Store switcher
           </Typography>
-          <Box sx={{ flexGrow: 1, display: "flex"  }}>
+          <Box sx={{ flexGrow: 1, display: "flex" }}>
             {routes.map((route) => (
               <Button
                 key={route.id}
-                onClick={()=>{
-                  console.log('route clicked',route)
+                onClick={() => {
+                  console.log("route clicked", route);
                 }}
                 disableRipple={true}
                 disableTouchRipple={true}
@@ -87,27 +94,28 @@ export default function DesktopNavbar({
                   className={cn(
                     "text-sm font-medium transition-colors  hover:text-primary",
                     route.active
-                      ? themeMode==='light' ?"text-black darl:text-white"  :"text-white darl:text-black"
+                      ? themeMode === "light"
+                        ? "text-black darl:text-white"
+                        : "text-white darl:text-black"
                       : "initial"
                   )}
                   style={{
-                    textDecoration:'none',
-                    color:'inherit'
+                    textDecoration: "none",
+                    color: "inherit",
                   }}
                 >
                   {route.label}
                 </Link>
 
-                {route.active && 
+                {route.active && (
                   <Box
                     sx={{
                       height: "2px",
                       width: "100%",
                       bgcolor: "text.primary",
-
-                   }}
+                    }}
                   ></Box>
-              }
+                )}
               </Button>
             ))}
           </Box>
@@ -115,15 +123,16 @@ export default function DesktopNavbar({
           <Box sx={{ flexGrow: 0 }}>
             <Stack direction="row" spacing={1}>
               {rightActionButtons.map((rightActionButton) => {
-                return rightActionButton.buttonEl;
+                return (
+                  <div key={rightActionButton.id}>
+                    {rightActionButton.buttonEl}
+                  </div>
+                );
               })}
             </Stack>
           </Box>
         </Toolbar>
-
-
-        </Container>  
-     
+      </Container>
     </AppBar>
   );
 }

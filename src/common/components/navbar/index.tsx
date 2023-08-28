@@ -5,6 +5,7 @@ import {
 import { useParams, usePathname } from "next/navigation";
 import MobileNavbar from "./mobile-navbar";
 import DesktopNavbar from "./desktop-navbar";
+import { useEffect, useState } from "react";
 
 interface Route {
   id:string;
@@ -20,7 +21,7 @@ export default function Navbar() {
   const theme = useTheme();
   const pathname = usePathname();
   const params = useParams();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const routes = [
     {

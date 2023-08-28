@@ -1,20 +1,25 @@
 "use client";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import {Stack, ThemeProvider, createTheme } from "@mui/material";
-import { useMemo } from "react";
+import { Stack, ThemeProvider, createTheme } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/common/components/navbar/index";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { redirect } from "next/navigation";
+//import { redirect } from "next/navigation";
 
 export default function StoreRootPage({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
-    
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const themeMode = useSelector((state: RootState) => state.app.themeMode);
-  const { user, error, isLoading } = useUser();
+  //const { user } = useUser();
 
   const theme = useMemo(
     () =>
@@ -26,23 +31,27 @@ export default function StoreRootPage({
     [themeMode]
   );
 
-  if(!user){
-    redirect("/api/auth/login");
-  }
+  /*if(!user){
+    console.log(user)
+   // redirect("/api/auth/login");
+  }*/
+
   return (
     <ThemeProvider theme={theme}>
-      <Stack
-        sx={{
-          height: "100%",
-          width: "100%",
+      {isMounted && (
+        <Stack
+          sx={{
+            height: "100%",
+            width: "100%",
 
-          bgcolor: "background.default",
-          color: "text.primary",
-        }}
-      >
-        <Navbar/>
-        {children}
-      </Stack>
+            bgcolor: "background.default",
+            color: "text.primary",
+          }}
+        >
+          <Navbar />
+          {children}
+        </Stack>
+      )}
     </ThemeProvider>
   );
 }

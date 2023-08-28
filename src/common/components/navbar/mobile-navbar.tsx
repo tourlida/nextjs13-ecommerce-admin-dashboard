@@ -3,13 +3,14 @@ import {
   Box,
   Container,
   IconButton,
+  Link,
   Menu,
   MenuItem,
   Stack,
   Toolbar,
   Typography,
 } from "@mui/material";
-import {  useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -19,6 +20,7 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import AdbIcon from "@mui/icons-material/Adb";
 import UserButton from "../user-button";
 import { NavbarProps } from ".";
+import { cn } from "@/common/utils/helpers";
 
 const MobileNavbar = ({ routes }: NavbarProps) => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -28,15 +30,18 @@ const MobileNavbar = ({ routes }: NavbarProps) => {
   const handleToggleTheme = useCallback(() => {
     console.log("handleToggleTheme");
     dispatch(toggleThemeMode());
-  },[dispatch]);
+  }, [dispatch]);
 
-  const handleOpenNavMenu =  useCallback((event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  },[]);
-  
-  const handleCloseNavMenu =  useCallback(() => {
+  const handleOpenNavMenu = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorElNav(event.currentTarget);
+    },
+    []
+  );
+
+  const handleCloseNavMenu = useCallback(() => {
     setAnchorElNav(null);
-  },[]);
+  }, []);
 
   const rightActionButtons = [
     {
@@ -64,7 +69,7 @@ const MobileNavbar = ({ routes }: NavbarProps) => {
         sx={{
           bgcolor: "background.default",
           color: "text.primary",
-          maxWidth:'100% !important'
+          maxWidth: "100% !important",
         }}
       >
         <Toolbar disableGutters>
@@ -95,10 +100,37 @@ const MobileNavbar = ({ routes }: NavbarProps) => {
               onClose={handleCloseNavMenu}
             >
               {routes.map((route) => (
-                <MenuItem key={route.label} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center" component="div">
+                <MenuItem key={route.id} sx={{display:'flex',flexDirection:'column',width:'fit-content'}}    onClick={()=>{
+                  console.log('route clicked',route)
+                }}>
+                  <Link
+                    key={route.href}
+                    href={route.href}
+                    className={cn(
+                      "text-sm font-medium transition-colors  hover:text-primary",
+                      route.active
+                        ? themeMode === "light"
+                          ? "text-black darl:text-white"
+                          : "text-white darl:text-black"
+                        : "initial"
+                    )}
+                    style={{
+                      textDecoration: "none",
+                      color: "inherit",
+                    }}
+                  >
                     {route.label}
-                  </Typography>
+                  </Link>
+
+                  {route.active && (
+                    <Box
+                      sx={{
+                        height: "2px",
+                        width: "100%",
+                        bgcolor: "text.primary",
+                      }}
+                    ></Box>
+                  )}
                 </MenuItem>
               ))}
             </Menu>
@@ -126,7 +158,11 @@ const MobileNavbar = ({ routes }: NavbarProps) => {
           <Box sx={{ flexGrow: 0 }}>
             <Stack direction="row" spacing={1}>
               {rightActionButtons.map((rightActionButton) => {
-                return rightActionButton.buttonEl;
+                return (
+                  <div key={rightActionButton.id}>
+                    {rightActionButton.buttonEl}
+                  </div>
+                );
               })}
             </Stack>
           </Box>
