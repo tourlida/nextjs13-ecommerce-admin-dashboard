@@ -21,8 +21,10 @@ import AdbIcon from "@mui/icons-material/Adb";
 import UserButton from "../user-button";
 import { NavbarProps } from ".";
 import { cn } from "@/common/utils/helpers";
+import RightActionButtons from "./components/right-action-buttons";
+import StoreSwitcher from "../store-switcher";
 
-const MobileNavbar = ({ routes }: NavbarProps) => {
+const MobileNavbar = ({  }: NavbarProps) => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const dispatch = useDispatch();
   const themeMode = useSelector((state: RootState) => state.app.themeMode);
@@ -43,25 +45,7 @@ const MobileNavbar = ({ routes }: NavbarProps) => {
     setAnchorElNav(null);
   }, []);
 
-  const rightActionButtons = [
-    {
-      id: "theme-button",
-      buttonEl: (
-        <IconButton
-          sx={{ ml: 1 }}
-          size="small"
-          onClick={handleToggleTheme}
-          color="inherit"
-        >
-          {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
-        </IconButton>
-      ),
-    },
-    {
-      id: "user-info-button",
-      buttonEl: <UserButton />,
-    },
-  ];
+ 
 
   return (
     <AppBar position="static">
@@ -73,7 +57,7 @@ const MobileNavbar = ({ routes }: NavbarProps) => {
         }}
       >
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1 }}>
+          {/*<Box sx={{ flexGrow: 1 }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -134,38 +118,11 @@ const MobileNavbar = ({ routes }: NavbarProps) => {
                 </MenuItem>
               ))}
             </Menu>
-          </Box>
+          </Box>*/}
 
-          <AdbIcon sx={{ mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="/store"
-            sx={{
-              mr: 2,
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Store Switcher
-          </Typography>
+          <StoreSwitcher/>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Stack direction="row" spacing={1}>
-              {rightActionButtons.map((rightActionButton) => {
-                return (
-                  <div key={rightActionButton.id}>
-                    {rightActionButton.buttonEl}
-                  </div>
-                );
-              })}
-            </Stack>
-          </Box>
+          <RightActionButtons/>
         </Toolbar>
       </Container>
     </AppBar>

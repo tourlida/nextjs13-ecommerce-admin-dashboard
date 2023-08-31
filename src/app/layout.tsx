@@ -3,6 +3,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
+import { ToastContainer as ToastProvider } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ModalProvider } from "@/common/providers/modal.provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +23,11 @@ export default function RootLayout({
     <UserProvider loginUrl="/api/auth/login">
       <html lang="en">
         <body className={inter.className}>
-          <ReduxProvider>{children}</ReduxProvider>
+          <ReduxProvider>
+            <ToastProvider />
+            <ModalProvider />
+            {children}
+          </ReduxProvider>
         </body>
       </html>
     </UserProvider>

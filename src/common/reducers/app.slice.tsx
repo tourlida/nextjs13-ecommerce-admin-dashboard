@@ -3,12 +3,12 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 interface AppState{
     // Navigation states
     themeMode: 'dark' | 'light';
-    IsModalOpen:boolean;
+    IsStoreModalOpen:boolean;
 };
 
 const initialState: AppState = {
     themeMode: 'light',
-    IsModalOpen:false
+    IsStoreModalOpen:false
 };
 
 // -------------------------------------------------------------------------------------------------------
@@ -16,8 +16,9 @@ export const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
-        toggleModalOpen: (state:AppState, action: PayloadAction<void>) => {
-            state.IsModalOpen = ! state.IsModalOpen;
+        toggleStoreModalOpen: (state:AppState, action: PayloadAction<boolean>) => {
+            console.log('toggleStoreModalOpen')
+            state.IsStoreModalOpen = !state.IsStoreModalOpen;
         },
         toggleThemeMode: (state, action: PayloadAction<void>) => {
             console.log('toggleThemeMode->',state.themeMode)
@@ -28,7 +29,7 @@ export const appSlice = createSlice({
 
 // -------------------------------------------------------------------------------------------------------
 export const {
-    toggleModalOpen,
+    toggleStoreModalOpen,
     toggleThemeMode,
 } = appSlice.actions;
 // -------------------------------------------------------------------------------------------------------
