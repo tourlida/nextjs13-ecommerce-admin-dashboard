@@ -10,7 +10,6 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleThemeMode } from "@/common/reducers/app.slice";
-import { NavbarProps } from "..";
 import { useCallback} from "react";
 
 
@@ -19,8 +18,7 @@ export default function RightActionButtons() {
   const themeMode = useSelector((state: RootState) => state.app.themeMode);
 
   const handleToggleTheme = useCallback(() => {
-    console.log("handleToggleTheme");
-    dispatch(toggleThemeMode());
+   dispatch(toggleThemeMode());
   }, [dispatch]);
 
   const rightActionButtons = [
