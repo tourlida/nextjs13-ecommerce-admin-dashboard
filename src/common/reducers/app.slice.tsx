@@ -17,11 +17,9 @@ export const appSlice = createSlice({
     initialState,
     reducers: {
         toggleStoreModalOpen: (state:AppState, action: PayloadAction<boolean>) => {
-            console.log('toggleStoreModalOpen')
             state.IsStoreModalOpen = !state.IsStoreModalOpen;
         },
         toggleThemeMode: (state, action: PayloadAction<void>) => {
-            console.log('toggleThemeMode->',state.themeMode)
             state.themeMode= state.themeMode==='light' ? 'dark' : 'light';
         },
     },

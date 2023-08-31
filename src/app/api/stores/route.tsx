@@ -28,3 +28,20 @@ export async function POST( req: Request) {
       return new NextResponse('Internal error',{status:500})
     }
 }
+
+export async function GET(
+    req: Request
+  ) {
+     const userId = await getUserId();
+    
+    
+    if(!userId){
+        return new NextResponse('Unauthenticated',{status:401})
+    }
+  
+    const stores = await prismadb.store.findMany({where:{
+        userId
+    }});
+
+    return NextResponse.json(stores);
+  }

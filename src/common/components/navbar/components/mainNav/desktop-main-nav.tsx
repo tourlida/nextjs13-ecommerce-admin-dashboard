@@ -5,41 +5,16 @@ import { Box, Button } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { cn } from "@/common/utils/helpers";
+import { Route } from ".";
 
-export default function MainNav({
-  className,
-  ...props
-}: React.HtmlHTMLAttributes<HTMLElement>) {
-  const pathname = usePathname();
-  const params = useParams();
+export default function DesktopMainNav({
+    routes
+  }:{
+      routes:Route[];
+  }){
+
   const themeMode = useSelector((state: RootState) => state.app.themeMode);
 
-  const routes = [
-    {
-      id:'overview',
-      label: "Overview",
-      href: `/store`,
-      active: pathname === `/store`,
-    },
-    {
-      id:'store',
-      label: "Store",
-      href: `/store/${params.storeId}`,
-      active: pathname === `/store/${params.storeId}`,
-    },
-    {
-      id:'store-billboards',
-      label: "Store Billboards",
-      href: `/store/${params.storeId}/billboards`,
-      active: pathname === `/store/${params.storeId}/billboards`,
-    },
-    {
-      id:'store-settings',
-      label: "Store Settings",
-      href: `/store/${params.storeId}/settings`,
-      active: pathname === `/store/${params.storeId}/settings`,
-    },
-  ];
   return (
     <Box sx={{ flexGrow: 1, display: "flex" }}>
             {routes.map((route) => (

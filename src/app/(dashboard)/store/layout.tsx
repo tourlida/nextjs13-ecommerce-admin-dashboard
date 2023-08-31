@@ -4,8 +4,6 @@ import { RootState } from "@/redux/store";
 import { Stack, ThemeProvider, createTheme } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/common/components/navbar/index";
-import { useUser } from "@auth0/nextjs-auth0/client";
-//import { redirect } from "next/navigation";
 
 export default function StoreRootPage({
   children,
@@ -19,7 +17,6 @@ export default function StoreRootPage({
   }, []);
 
   const themeMode = useSelector((state: RootState) => state.app.themeMode);
-  //const { user } = useUser();
 
   const theme = useMemo(
     () =>
@@ -30,11 +27,6 @@ export default function StoreRootPage({
       }),
     [themeMode]
   );
-
-  /*if(!user){
-    console.log(user)
-   // redirect("/api/auth/login");
-  }*/
 
   return (
     <ThemeProvider theme={theme}>

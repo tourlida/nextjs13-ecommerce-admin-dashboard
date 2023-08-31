@@ -98,7 +98,7 @@ export default function UserButton() {
         <LogoutLabel href="/api/auth/logout">
           <MenuItem onClick={handleLogout} href="/api/auth/logout">
             <ListItemIcon>
-              <LogoutIcon fontSize="small" />
+              <LogoutIcon fontSize="small" className="h-4 w-4"/>
             </ListItemIcon>
             Logout
           </MenuItem>

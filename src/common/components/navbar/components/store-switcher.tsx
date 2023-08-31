@@ -1,27 +1,35 @@
 "use client";
 
 import { Store } from "@prisma/client";
-import { redirect, useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { useStoreModal } from "../hooks/useStoreModal";
-import { Button, Divider, Menu, MenuItem, Typography } from "@mui/material";
+import { useParams, useRouter } from "next/navigation";
+import { cache, use, useCallback, useState } from "react";
+import { useStoreModal } from "../../../hooks/useStoreModal";
+import { Box, Button, Divider, Menu, MenuItem, Typography } from "@mui/material";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import CheckIcon from "@mui/icons-material/Check";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { cn, getUserId } from "../utils/helpers";
-import prismadb from "../utils/prismadb";
-import { useUser } from "@auth0/nextjs-auth0/client";
-import axios from "axios";
+import { useOrigin } from "../../../hooks/useOrigin";
 
+interface StoreSwitcherProps {
+  items: Store[];
+}
+
+const getStores = cache((originUrl: string) => {
+  return fetch(`${originUrl}/api/stores`)
+    .then((res) => res.json())
+    .catch((err) => {
+      console.error(err);
+    });
+});
 
 export default function StoreSwitcher() {
   const storeModal = useStoreModal();
   const params = useParams();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [stores, setStores] = useState<Store[] | []>([]);
-  const { user } = useUser();
+  const origin = useOrigin();
+  let stores = use<Store[]>(getStores(origin));
 
   const formattedItems = stores.map((item) => {
     return {
@@ -30,30 +38,14 @@ export default function StoreSwitcher() {
     };
   });
 
-  useEffect(() => {
-    if (user && user.sub !== "") {
-      axios.get(`/api/getStores?userId=${user.sub}`)
-        .then(response => {
-          setStores(response.data);
-        })
-        .catch(error => {
-          console.error("Error fetching stores:", error);
-        });
-    }
-  }, [user]);
-
-
- 
 
   const selectedStore = formattedItems.find(
-    (item: { value: string | string[]; }) => item.value === params.storeId
+    (item) => item.value === params.storeId
   );
 
   const onStoreSelect = (store: { value: string; label: string }) => {
-    console.log("onStoreSelect-store->", store);
     setAnchorEl(null);
-    console.log("onStoreSelect-router->", router);
-    router.push(`/storeoverview/${store.value}`);
+    router.push(`/store/${store.value}`);
   };
 
   const handleTogglePopover = useCallback(
@@ -81,24 +73,49 @@ export default function StoreSwitcher() {
         sx={{
           width: "170px",
           justifyContent: "space-between",
+          flexGrow:{
+            xs:2,
+            sm:2,
+            md:2,
+            lg:0
+          }
         }}
         onClick={(e) => handleTogglePopover(e)}
+        startIcon={<StorefrontIcon className="mr-2 h-4 w-4" />}
+        endIcon={
+          <UnfoldMoreIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+        }
       >
-        <StorefrontIcon className="mr-2 h-4 w-4" />
-        <Typography
-          variant="caption"
-          sx={{
-            maxWidth: "100%",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textTransform: "none",
-          }}
-          component="div"
-        >
-          {selectedStore?.label}
-        </Typography>
-        <UnfoldMoreIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+        {selectedStore ? (
+          <Typography
+            variant="caption"
+            sx={{
+              maxWidth: "100%",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textTransform: "none",
+            }}
+            component="div"
+          >
+            {selectedStore?.label}
+          </Typography>
+        ) : (
+          <Typography
+            variant="caption"
+            sx={{
+              maxWidth: "100%",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textTransform: "none",
+              opacity: 0.4,
+            }}
+            component="div"
+          >
+            Select a store...
+          </Typography>
+        )}
       </Button>
 
       <Menu
@@ -112,6 +129,12 @@ export default function StoreSwitcher() {
           overflow: "visible",
           filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
           mt: 1,
+          flexGrow:{
+            xs:2,
+            sm:2,
+            md:2,
+            lg:0
+          }
         }}
         anchorOrigin={{
           vertical: "bottom",
@@ -131,7 +154,7 @@ export default function StoreSwitcher() {
               }}
               className="text-sm"
             >
-              <StorefrontIcon className="mr-2 h-4 w-4" />
+              <StorefrontIcon className="h-4 w-4" />
               <Typography
                 component="div"
                 sx={{
@@ -140,19 +163,17 @@ export default function StoreSwitcher() {
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textTransform: "none",
+                  ml: 2,
+                  mr: 2,
                 }}
                 variant="button"
               >
                 {store.label}
               </Typography>
-              <CheckIcon
-                className={cn(
-                  "mr-2 ml-2 h-4 w-4",
-                  selectedStore?.value === store.value
-                    ? "opacity-100"
-                    : "opacity-0"
-                )}
-              />
+
+              {selectedStore?.value === store.value && (
+                <CheckIcon className={"mr-2 ml-2 h-4 w-4"} />
+              )}
             </MenuItem>
           );
         })}
@@ -173,4 +194,3 @@ export default function StoreSwitcher() {
     </>
   );
 }
-

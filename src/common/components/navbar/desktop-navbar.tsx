@@ -1,22 +1,15 @@
+
 import {
   AppBar,
   Container,
   Toolbar,
 } from "@mui/material";
-
-import { RootState, store } from "@/redux/store";
-import {  useSelector } from "react-redux";
-import {  getUserId } from "@/common/utils/helpers";
-import { NavbarProps } from ".";
-import { useCallback, useEffect, useState } from "react";
-import StoreSwitcher from "../store-switcher";
-import { redirect } from "next/navigation";
-import prismadb from "@/common/utils/prismadb";
-import { Store } from "@prisma/client";
+import StoreSwitcher from "./components/store-switcher";
 import RightActionButtons from "./components/right-action-buttons";
-import MainNav from "./components/main-nav";
+import MainNav from "./components/mainNav";
 
-export default function DesktopNavbar({}: NavbarProps) {
+
+export default function DesktopNavbar() {
 
   return (
     <AppBar position="static">
@@ -28,7 +21,7 @@ export default function DesktopNavbar({}: NavbarProps) {
         }}
       >
         <Toolbar disableGutters sx={{ width: "100%" }}>
-          <StoreSwitcher />
+          <StoreSwitcher/>
           <MainNav />
           <RightActionButtons />
         </Toolbar>

@@ -4,7 +4,7 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import UserButton from "../../user-button";
+import UserButton from "./user-button";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { RootState } from "@/redux/store";

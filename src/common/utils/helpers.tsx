@@ -8,6 +8,5 @@ export function cn(...inputs: ClassValue[]) {
 
 export async function getUserId() {
   const session = await getSession();
-  console.log('getUserId->',session)
   return session?.user.sub || null;
 }
