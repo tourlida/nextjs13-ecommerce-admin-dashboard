@@ -56,6 +56,7 @@ export const StoreModal = () => {
       toast("Something went wrong", {
         type: "error",
         progress: 5,
+        autoClose:4,
         position: "top-right",
       });
     } finally {

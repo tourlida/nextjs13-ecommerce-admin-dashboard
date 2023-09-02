@@ -2,44 +2,55 @@
 
 import { Store } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
-import { cache, use, useCallback, useState } from "react";
+import { cache, use, useCallback, useEffect, useState } from "react";
 import { useStoreModal } from "../../../hooks/useStoreModal";
-import { Box, Button, Divider, Menu, MenuItem, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import CheckIcon from "@mui/icons-material/Check";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useOrigin } from "../../../hooks/useOrigin";
 
-interface StoreSwitcherProps {
-  items: Store[];
-}
-
-const getStores = cache((originUrl: string) => {
+const fetchStores = (originUrl: string) => {
   return fetch(`${originUrl}/api/stores`)
     .then((res) => res.json())
     .catch((err) => {
       console.error(err);
     });
-});
+};
 
 export default function StoreSwitcher() {
   const storeModal = useStoreModal();
   const params = useParams();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const origin = useOrigin();
-  let stores = use<Store[]>(getStores(origin));
+  const [stores, setStores] = useState<Store[]>([]);
 
-  const formattedItems = stores.map((item) => {
+  const origin = useOrigin();
+
+  const loadData = useCallback(() => {
+    fetchStores(origin).then((data) => setStores(data));
+  }, [origin]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData, params, router]);
+
+  const formattedItems = stores?.map((item) => {
     return {
       label: item.name,
       value: item.id,
     };
-  });
-
-
-  const selectedStore = formattedItems.find(
+  }) ?? [];
+  
+  const selectedStore = formattedItems?.find(
     (item) => item.value === params.storeId
   );
 
@@ -73,12 +84,12 @@ export default function StoreSwitcher() {
         sx={{
           width: "170px",
           justifyContent: "space-between",
-          flexGrow:{
-            xs:2,
-            sm:2,
-            md:2,
-            lg:0
-          }
+          flexGrow: {
+            xs: 2,
+            sm: 2,
+            md: 2,
+            lg: 0,
+          },
         }}
         onClick={(e) => handleTogglePopover(e)}
         startIcon={<StorefrontIcon className="mr-2 h-4 w-4" />}
@@ -129,12 +140,12 @@ export default function StoreSwitcher() {
           overflow: "visible",
           filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
           mt: 1,
-          flexGrow:{
-            xs:2,
-            sm:2,
-            md:2,
-            lg:0
-          }
+          flexGrow: {
+            xs: 2,
+            sm: 2,
+            md: 2,
+            lg: 0,
+          },
         }}
         anchorOrigin={{
           vertical: "bottom",
