@@ -2,10 +2,9 @@
 
 import { Store } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
-import { cache, use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useStoreModal } from "../../../hooks/useStoreModal";
 import {
-  Box,
   Button,
   Divider,
   Menu,
@@ -17,6 +16,8 @@ import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import CheckIcon from "@mui/icons-material/Check";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useOrigin } from "../../../hooks/useOrigin";
+import { useDispatch } from "react-redux";
+import { selectStore } from "@/common/reducers/app.slice";
 
 const fetchStores = (originUrl: string) => {
   return fetch(`${originUrl}/api/stores`)
@@ -32,6 +33,7 @@ export default function StoreSwitcher() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
+  const dispath = useDispatch();
 
   const origin = useOrigin();
 
@@ -45,16 +47,24 @@ export default function StoreSwitcher() {
 
   const formattedItems = stores?.map((item) => {
     return {
+      ...item,
       label: item.name,
       value: item.id,
     };
   }) ?? [];
-  
-  const selectedStore = formattedItems?.find(
-    (item) => item.value === params.storeId
+
+  const selectedStore = stores?.find(
+    (item) => item.id === params.storeId
   );
 
-  const onStoreSelect = (store: { value: string; label: string }) => {
+  
+
+  
+
+  const onStoreSelect = (store:any)=>{ // { value: string; label: string }) => {
+    //todo console
+    console.log('store->',store)
+    dispath(selectStore(store));
     setAnchorEl(null);
     router.push(`/store/${store.value}`);
   };
@@ -109,7 +119,7 @@ export default function StoreSwitcher() {
             }}
             component="div"
           >
-            {selectedStore?.label}
+            {selectedStore?.name}
           </Typography>
         ) : (
           <Typography
@@ -182,7 +192,7 @@ export default function StoreSwitcher() {
                 {store.label}
               </Typography>
 
-              {selectedStore?.value === store.value && (
+              {selectedStore?.name === store.value && (
                 <CheckIcon className={"mr-2 ml-2 h-4 w-4"} />
               )}
             </MenuItem>
