@@ -6,22 +6,8 @@ import { AlertModal } from "@/common/components/modals/alert-modal";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import ApiAlert from "@/common/components/api-alert";
-import * as z from 'zod';
-const formSchema = z.object({
-    name: z
-      .string({
-        errorMap: () => {
-          return { message: "Name is required." };
-        },
-      })
-      .min(1),
-  });
-  
-  //Extra form values type
-  type StoreModalSchema = z.infer<typeof formSchema>;
+import ApiAlert from "@/app/(dashboard)/store/(routes)/[storeId]/(routes)/settings/components/api-alert";
+import SettingsForm from "./components/settings-form";
 
 export default function StoreSettingsPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +25,7 @@ export default function StoreSettingsPage() {
       toast("Store deleted successfully.", {
         type: "success",
         progress: 5,
-        autoClose:4,
+        autoClose: 4,
         position: "top-right",
       });
     } catch (error) {
@@ -48,7 +34,7 @@ export default function StoreSettingsPage() {
       toast("Make sure you removed all products and categories first.", {
         type: "error",
         progress: 5,
-        autoClose:4,
+        autoClose: 4,
         position: "top-right",
       });
     } finally {
@@ -56,7 +42,7 @@ export default function StoreSettingsPage() {
       setIsOpen(false);
     }
   }, [params.storeId, router]);
-  
+
   const headingEl = (
     <>
       <Stack
@@ -95,11 +81,9 @@ export default function StoreSettingsPage() {
           <DeleteIcon className="h-4 w-4" />
         </Button>
       </Stack>
-      <Divider sx={{ mt: 2, mb:2, height: "2px" }} />
+      <Divider sx={{ mt: 2, mb: 2, height: "2px" }} />
     </>
   );
-
-  const renameFormEl = null;
 
   return (
     <Box
@@ -115,11 +99,12 @@ export default function StoreSettingsPage() {
         isLoading={isLoading}
       />
       {headingEl}
+      <SettingsForm />
       <ApiAlert
         title="NEXT_PUBLIC_API_URL"
         description={`${origin}/api/${params.storeId}`}
         variant="public"
-    />
+      />
     </Box>
   );
 }
