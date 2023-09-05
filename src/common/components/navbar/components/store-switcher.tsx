@@ -2,50 +2,78 @@
 
 import { Store } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
-import { cache, use, useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useStoreModal } from "../../../hooks/useStoreModal";
-import { Box, Button, Divider, Menu, MenuItem, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import CheckIcon from "@mui/icons-material/Check";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useOrigin } from "../../../hooks/useOrigin";
+import { useDispatch, useSelector } from "react-redux";
+import { selectStore } from "@/common/reducers/app.slice";
+import { RootState } from "@/redux/store";
 
-interface StoreSwitcherProps {
-  items: Store[];
-}
-
-const getStores = cache((originUrl: string) => {
+const fetchStores = (originUrl: string) => {
   return fetch(`${originUrl}/api/stores`)
     .then((res) => res.json())
     .catch((err) => {
       console.error(err);
     });
-});
+};
 
 export default function StoreSwitcher() {
   const storeModal = useStoreModal();
-  const params = useParams();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const origin = useOrigin();
-  let stores = use<Store[]>(getStores(origin));
+  const [stores, setStores] = useState<Store[]>([]);
+  const selectedStore = useSelector((state: RootState) => state.app.selectedStore);
 
-  const formattedItems = stores.map((item) => {
+  const dispath = useDispatch();
+
+  const origin = useOrigin();
+
+  const loadData = useCallback(() => {
+    fetchStores(origin).then((data) => setStores(data));
+  }, [origin]);
+
+  useEffect(() => {
+    console.log('loadData..')
+    loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(()=>{
+    //if no store is selected pre-select the first one
+    if(!selectedStore && stores?.length>0){
+      dispath(selectStore(stores[0]));
+    }else if(selectedStore && stores?.length===0){
+      dispath(selectStore(null));
+    }
+  },[dispath, selectedStore, stores])
+
+  console.log('stores->',stores)
+  const formattedItems = stores?.map((item) => {
     return {
+      ...item,
       label: item.name,
       value: item.id,
     };
-  });
+  }) ?? [];
 
+  
 
-  const selectedStore = formattedItems.find(
-    (item) => item.value === params.storeId
-  );
-
-  const onStoreSelect = (store: { value: string; label: string }) => {
+  const onStoreSelect = (store:any)=>{ // { value: string; label: string }) => {
+    //store selected store in redux 
+    dispath(selectStore(store));
     setAnchorEl(null);
-    router.push(`/store/${store.value}`);
+    router.push(`/${store.value}`);
   };
 
   const handleTogglePopover = useCallback(
@@ -64,6 +92,7 @@ export default function StoreSwitcher() {
   }, []);
 
   const isOpen = Boolean(anchorEl);
+  console.log('[StoreSwitcher]selectedStore->',selectedStore)
 
   return (
     <>
@@ -73,12 +102,12 @@ export default function StoreSwitcher() {
         sx={{
           width: "170px",
           justifyContent: "space-between",
-          flexGrow:{
-            xs:2,
-            sm:2,
-            md:2,
-            lg:0
-          }
+          flexGrow: {
+            xs: 2,
+            sm: 2,
+            md: 2,
+            lg: 0,
+          },
         }}
         onClick={(e) => handleTogglePopover(e)}
         startIcon={<StorefrontIcon className="mr-2 h-4 w-4" />}
@@ -98,7 +127,7 @@ export default function StoreSwitcher() {
             }}
             component="div"
           >
-            {selectedStore?.label}
+            {selectedStore?.name}
           </Typography>
         ) : (
           <Typography
@@ -129,12 +158,12 @@ export default function StoreSwitcher() {
           overflow: "visible",
           filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
           mt: 1,
-          flexGrow:{
-            xs:2,
-            sm:2,
-            md:2,
-            lg:0
-          }
+          flexGrow: {
+            xs: 2,
+            sm: 2,
+            md: 2,
+            lg: 0,
+          },
         }}
         anchorOrigin={{
           vertical: "bottom",
@@ -171,15 +200,13 @@ export default function StoreSwitcher() {
                 {store.label}
               </Typography>
 
-              {selectedStore?.value === store.value && (
+              {selectedStore?.id === store.value && (
                 <CheckIcon className={"mr-2 ml-2 h-4 w-4"} />
               )}
             </MenuItem>
           );
         })}
-        <MenuItem>
-          <Divider sx={{ height: "2px", width: "100%" }} />
-        </MenuItem>
+        <Divider sx={{ height: "2px", margin:'8px 16px' }} />
         <MenuItem
           onClick={() => {
             setAnchorEl(null);

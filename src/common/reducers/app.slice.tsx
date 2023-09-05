@@ -1,14 +1,17 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { Store } from "@prisma/client";
 
 interface AppState{
     // Navigation states
     themeMode: 'dark' | 'light';
     IsStoreModalOpen:boolean;
+    selectedStore: Store | null;
 };
 
 const initialState: AppState = {
     themeMode: 'light',
-    IsStoreModalOpen:false
+    IsStoreModalOpen:false,
+    selectedStore:null
 };
 
 // -------------------------------------------------------------------------------------------------------
@@ -22,6 +25,9 @@ export const appSlice = createSlice({
         toggleThemeMode: (state, action: PayloadAction<void>) => {
             state.themeMode= state.themeMode==='light' ? 'dark' : 'light';
         },
+        selectStore: (state, action: PayloadAction<Store | null>) => {
+            state.selectedStore= action.payload;
+        },
     },
 });
 
@@ -29,6 +35,7 @@ export const appSlice = createSlice({
 export const {
     toggleStoreModalOpen,
     toggleThemeMode,
+    selectStore
 } = appSlice.actions;
 // -------------------------------------------------------------------------------------------------------
 export default appSlice.reducer;
