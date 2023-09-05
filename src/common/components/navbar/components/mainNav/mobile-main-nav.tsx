@@ -1,7 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { Box, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { cn } from "@/common/utils/helpers";
@@ -53,46 +60,47 @@ export default function MobileMainNav({ routes }: { routes: Route[] }) {
         onClose={handleCloseNavMenu}
       >
         {routes.map((route) => (
-          <MenuItem
-            key={route.id}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "fit-content",
-            }}
-            onClick={() => {
-              console.log("route clicked", route);
+          <Link
+            key={route.href}
+            href={route.href}
+            className={cn(
+              "text-sm font-medium transition-colors  hover:text-primary",
+              route.active
+                ? themeMode === "light"
+                  ? "text-black darl:text-white"
+                  : "text-white darl:text-black"
+                : "initial"
+            )}
+            style={{
+              textDecoration: "none",
+              color: "inherit",
             }}
           >
-            <Link
-              key={route.href}
-              href={route.href}
-              className={cn(
-                "text-sm font-medium transition-colors  hover:text-primary",
-                route.active
-                  ? themeMode === "light"
-                    ? "text-black darl:text-white"
-                    : "text-white darl:text-black"
-                  : "initial"
-              )}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
+            <MenuItem
+              key={route.id}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
               }}
+              onClick={handleCloseNavMenu}
             >
-              {route.label}
-            </Link>
+              <Typography component="div" variant="button">
+                {route.label}
 
-            {route.active && (
-              <Box
-                sx={{
-                  height: "2px",
-                  width: "100%",
-                  bgcolor: "text.primary",
-                }}
-              ></Box>
-            )}
-          </MenuItem>
+              {route.active && (
+                <Box
+                  sx={{
+                    height: "2px",
+                    width: "100%",
+                    bgcolor: "text.primary",
+                  }}
+                ></Box>
+              )}
+              </Typography>
+
+            </MenuItem>
+          </Link>
         ))}
       </Menu>
     </Box>

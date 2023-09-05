@@ -25,7 +25,7 @@ export const appSlice = createSlice({
         toggleThemeMode: (state, action: PayloadAction<void>) => {
             state.themeMode= state.themeMode==='light' ? 'dark' : 'light';
         },
-        selectStore: (state, action: PayloadAction<Store>) => {
+        selectStore: (state, action: PayloadAction<Store | null>) => {
             state.selectedStore= action.payload;
         },
     },

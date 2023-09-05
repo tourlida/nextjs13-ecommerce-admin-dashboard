@@ -1,27 +1,37 @@
 "use client";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AlertModal } from "@/common/components/modals/alert-modal";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import ApiAlert from "@/app/(dashboard)/store/(routes)/[storeId]/(routes)/settings/components/api-alert";
+import ApiAlert from "@/app/(dashboard)/[storeId]/(routes)/settings/components/api-alert";
 import SettingsForm from "./components/settings-form";
+import { useDispatch, useSelector } from "react-redux";
+import { selectStore } from "@/common/reducers/app.slice";
+import { RootState } from "@/redux/store";
 
 export default function StoreSettingsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
+  const dispath = useDispatch();
+  const selectedStore = useSelector((state:RootState) => state.app.selectedStore);
+  //todo need to check if any other store exists
+  /*if(!selectedStore && stores.length===0){
+    window.location.assign(`/`);
+  }*/
+  
 
   const handleDeleteStore = useCallback(async () => {
     try {
       setIsLoading(true);
       await axios.delete(`/api/stores/${params.storeId}`);
+      dispath(selectStore(null));
       router.refresh();
-      router.push("/");
-
+      router.push('/');
       toast("Store deleted successfully.", {
         type: "success",
         progress: 5,

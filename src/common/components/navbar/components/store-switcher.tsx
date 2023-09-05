@@ -16,8 +16,9 @@ import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import CheckIcon from "@mui/icons-material/Check";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useOrigin } from "../../../hooks/useOrigin";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectStore } from "@/common/reducers/app.slice";
+import { RootState } from "@/redux/store";
 
 const fetchStores = (originUrl: string) => {
   return fetch(`${originUrl}/api/stores`)
@@ -29,10 +30,11 @@ const fetchStores = (originUrl: string) => {
 
 export default function StoreSwitcher() {
   const storeModal = useStoreModal();
-  const params = useParams();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
+  const selectedStore = useSelector((state: RootState) => state.app.selectedStore);
+
   const dispath = useDispatch();
 
   const origin = useOrigin();
@@ -42,9 +44,21 @@ export default function StoreSwitcher() {
   }, [origin]);
 
   useEffect(() => {
+    console.log('loadData..')
     loadData();
-  }, [loadData, params, router]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(()=>{
+    //if no store is selected pre-select the first one
+    if(!selectedStore && stores?.length>0){
+      dispath(selectStore(stores[0]));
+    }else if(selectedStore && stores?.length===0){
+      dispath(selectStore(null));
+    }
+  },[dispath, selectedStore, stores])
+
+  console.log('stores->',stores)
   const formattedItems = stores?.map((item) => {
     return {
       ...item,
@@ -53,20 +67,13 @@ export default function StoreSwitcher() {
     };
   }) ?? [];
 
-  const selectedStore = stores?.find(
-    (item) => item.id === params.storeId
-  );
-
-  
-
   
 
   const onStoreSelect = (store:any)=>{ // { value: string; label: string }) => {
-    //todo console
-    console.log('store->',store)
+    //store selected store in redux 
     dispath(selectStore(store));
     setAnchorEl(null);
-    router.push(`/store/${store.value}`);
+    router.push(`/${store.value}`);
   };
 
   const handleTogglePopover = useCallback(
@@ -85,6 +92,7 @@ export default function StoreSwitcher() {
   }, []);
 
   const isOpen = Boolean(anchorEl);
+  console.log('[StoreSwitcher]selectedStore->',selectedStore)
 
   return (
     <>
@@ -192,15 +200,13 @@ export default function StoreSwitcher() {
                 {store.label}
               </Typography>
 
-              {selectedStore?.name === store.value && (
+              {selectedStore?.id === store.value && (
                 <CheckIcon className={"mr-2 ml-2 h-4 w-4"} />
               )}
             </MenuItem>
           );
         })}
-        <MenuItem>
-          <Divider sx={{ height: "2px", width: "100%" }} />
-        </MenuItem>
+        <Divider sx={{ height: "2px", margin:'8px 16px' }} />
         <MenuItem
           onClick={() => {
             setAnchorEl(null);

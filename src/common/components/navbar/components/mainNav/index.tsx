@@ -13,8 +13,6 @@ export interface Route {
     href: string;
     active:boolean;
   }
-
-  
   
   export default  function MainNavbar() {
     const theme = useTheme();
@@ -24,28 +22,22 @@ export interface Route {
 
     const routes: Route[] = [
         {
-          id:'overview',
-          label: "Overview",
-          href: `/store`,
-          active: pathname === `/store`,
-        },
-        {
           id:'store',
           label: "Store",
-          href: `/store/${params.storeId}`,
-          active: pathname === `/store/${params.storeId}`,
+          href: `/${params.storeId}`,
+          active: pathname === `/${params.storeId}`,
         },
         {
           id:'store-billboards',
-          label: "Store Billboards",
-          href: `/store/${params.storeId}/billboards`,
-          active: pathname === `/store/${params.storeId}/billboards`,
+          label: "Billboards",
+          href: `/${params.storeId}/billboards`,
+          active: pathname === `/${params.storeId}/billboards`,
         },
         {
           id:'store-settings',
-          label: "Store Settings",
-          href: `/store/${params.storeId}/settings`,
-          active: pathname === `/store/${params.storeId}/settings`,
+          label: "Settings",
+          href: `/${params.storeId}/settings`,
+          active: pathname === `/${params.storeId}/settings`,
         },
       ];  
     return isMobile ? (
