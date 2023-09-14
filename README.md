@@ -6,6 +6,7 @@ This is a e-commerce app.
 - **Auth0**
 - **Prisma**
 - **tailwind**
+- **Cloudinary**
 
 Prisma
 
